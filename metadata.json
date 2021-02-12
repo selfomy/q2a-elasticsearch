@@ -1,0 +1,14 @@
+{
+    "name": "ElasticSearch Module for Q2A",
+    "uri": "https://github.com/selfomy/q2a-elasticsearch",
+    "description": "Improve Q2A search feature by using ElasticSearch",
+    "version": "1.0.0",
+    "date": "2020-02-12",
+    "author": "Selfomy",
+    "author_uri": "https://selfomy.com/",
+    "license": "MIT",
+    "update_uri": "https://github.com/selfomy/q2a-elasticsearch/master/metadata.json",
+    "min_q2a": "1.8",
+    "min_php": "7.0.0"
+  }
+  
