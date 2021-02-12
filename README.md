@@ -2,10 +2,14 @@
 Improve Q2A search feature by using ElasticSearch - the top powerful, fast and scalable full-text search engine.
 Originally made by [Vijay Sharma](https://github.com/vijsha79/q2a-elasticsearch)
 
-## Features
+## Feature
 - According to our benchmark, we experienced an improvement in response time when searching from 35 seconds to 5 seconds (70% faster).
 - All features of the default search module of Q2A. 
 - Powered by ElasticSearch - a powerful, fast and scalable full-text search engine. 
+
+## Requirements
+- ElasticSearch server (self-hosted or on-premise), read Install section to install ES server if you don't have one. 
+- Q2A minimun version: 1.8
 
 ## Install
 1. Install ElasticSearch on your server, [read more](https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html)
