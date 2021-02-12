@@ -7,8 +7,7 @@
     "author": "Selfomy",
     "author_uri": "https://selfomy.com/",
     "license": "MIT",
-    "update_uri": "https://github.com/selfomy/q2a-elasticsearch/master/metadata.json",
+    "update_uri": "https://github.com/selfomy/q2a-elasticsearch/raw/master/metadata.json",
     "min_q2a": "1.8",
     "min_php": "7.0.0"
   }
-  
