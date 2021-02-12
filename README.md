@@ -2,7 +2,7 @@
 Improve Q2A search feature by using ElasticSearch - the top powerful, fast and scalable full-text search engine.
 Originally made by [Vijay Sharma](https://github.com/vijsha79/q2a-elasticsearch)
 
-## Feature
+## Features
 - According to our benchmark, we experienced an improvement in response time when searching from 35 seconds to 5 seconds (70% faster).
 - All features of the default search module of Q2A. 
 - Powered by ElasticSearch - a powerful, fast and scalable full-text search engine. 
