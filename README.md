@@ -16,8 +16,10 @@ Originally made by [Vijay Sharma](https://github.com/vijsha79/q2a-elasticsearch)
 2. Clone or download this plugin and save it to qa-plugin of your Q2A site
 3. Navigate to the q2a-elasticsearch/es-client folder
 4. Run ```composer install```, in case you're using shared hosting, please run it at your local computer and then upload to shared host. You'll need to install composer first.
-3. Setup ElasticSearch connection parameters in Q2A admin, leave username and password field empty if you don't create any ES user. 
-4. Reindex all content by going to Admin>Stats
+5. Setup ElasticSearch connection parameters in Q2A admin, leave username and password field empty if you don't create any ES user. 
+6. Reindex all content by going to Admin>Stats
+7. Switch to ElasticSearch module by go to Admin>Lists>Use search module and select ```qa_elasticsearch```.
+8. Enjoy!
 
 ## ElasticSearch query
 ```
