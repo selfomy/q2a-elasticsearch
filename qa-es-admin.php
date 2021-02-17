@@ -123,7 +123,7 @@ class qa_elasticsearch {
 				);
 		$fields[] = array(
 					'label' => 'ElasticSearch Password',
-					'tags' => 'NAME="elasticsearch_password"',
+					'tags' => 'NAME="elasticsearch_password" type="password"',
 					'value' => qa_opt('elasticsearch_password'),
 					'type' => 'input',
 				);
