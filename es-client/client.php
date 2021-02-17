@@ -4,18 +4,12 @@
 function create_es_client ($host , $port, $scheme = 'http', $username = null, $password = null) {
     if ($username == "" || $password == "") {
         $hosts = [
-        'host' => $host,
-        'port' => $port,
-        'scheme' => $scheme
+            $scheme.'://'.$host.':'.$port
         ];
     } else {
         $hosts = [
-            'host' => $host,
-            'port' => $port,
-            'scheme' => $scheme,
-            'user' => $username,
-            'pass' => $password,
-            ];
+            $scheme.'://'.$username.':'.$password.'@'.$host.':'.$port
+        ];
     }
     $client = ClientBuilder::create()->setHosts($hosts)->build();
     return $client;
