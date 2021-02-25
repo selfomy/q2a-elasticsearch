@@ -9,5 +9,6 @@
     "license": "MIT",
     "update_uri": "https://github.com/selfomy/q2a-elasticsearch/raw/master/metadata.json",
     "min_q2a": "1.8",
-    "min_php": "7.0.0"
-  }
+    "min_php": "7.0.0",
+    "load_order": "after_db_init"
+}

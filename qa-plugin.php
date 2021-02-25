@@ -19,7 +19,6 @@
 		exit;
 	}
 
-
 	qa_register_plugin_module('search', 'qa-es-admin.php', 'qa_elasticsearch', 'qa_elasticsearch');
 	
 

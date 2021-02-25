@@ -123,7 +123,7 @@ class qa_elasticsearch {
 				);
 		$fields[] = array(
 					'label' => 'ElasticSearch Password',
-					'tags' => 'NAME="elasticsearch_password"',
+					'tags' => 'NAME="elasticsearch_password" type="password"',
 					'value' => qa_opt('elasticsearch_password'),
 					'type' => 'input',
 				);
@@ -152,8 +152,34 @@ class qa_elasticsearch {
 	}
 
 	public function index_post($postid, $type, $questionid, $parentid, $title, $content, $format, $text, $tagstring, $categoryid) {
+		//$start = microtime(true);
+		require_once QA_INCLUDE_DIR.'app/posts.php';
 		$this->create_es_client_if_needed();
 		$params = array();
+		if ($type === "A") { //If this is an answer
+			$query = qa_db_read_one_assoc(qa_db_query_sub("
+		SELECT userid, title, created, updated, catidpath1, catidpath2, catidpath3 FROM ^posts WHERE `postid` = #", $questionid), true);
+			$userid = $query['userid'];
+			$title = $query['title'];
+			$catidpath1 = $query['catidpath1'];
+			$catidpath2 = $query['catidpath2'];
+			$catidpath3 = $query['catidpath3'];
+			$created = $query['created'];
+			$updated = $query['updated'];
+		} else {
+			$query = qa_db_read_one_assoc(qa_db_query_sub("
+		SELECT userid, selchildid, created, updated, catidpath1, amaxvote, catidpath2, catidpath3 FROM ^posts WHERE `postid` = #", $questionid), true);
+			$userid = $query['userid'];
+			$selchildid = $query['selchildid'];
+			$catidpath1 = $query['catidpath1'];
+			$catidpath2 = $query['catidpath2'];
+			$catidpath3 = $query['catidpath3'];
+			$amaxvote = $query['amaxvote'];
+			$created = $query['created'];
+			$updated = $query['updated'];
+		}
+		//error_log(json_encode($query));
+		//error_log((json_encode(qa_post_get_full($questionid))));
 		$params['body']  = array(
 		     'questionid' => $questionid,
 		     'title' => $title,
@@ -162,25 +188,46 @@ class qa_elasticsearch {
 		     'text' => $text,
 		     'tagstring' => $tagstring,
 		     'categoryid' => $categoryid,
+			 'userid' => $userid,
+			 'created' => $created,
+			 'updated' => $updated,
+			 'catidpath1' => $catidpath1,
+			 'catidpath2' => $catidpath2,
+			 'catidpath3' => $catidpath3,
 		     'parentid' => $parentid,
 		     'postid' => $postid,
 		     'type' => $type	
 		);
+		if ($type === "Q") {
+			if (isset($selchildid) && !is_null($selchildid)) {
+			$query = qa_db_read_one_assoc(qa_db_query_sub("
+	SELECT content FROM ^posts WHERE `postid` = #", $selchildid), true);
+			$params['body']['selchildcontent'] = $query['content'];
+			$params['body']['selchildtext'] =  qa_post_content_to_text($query['content'], $format);
+			$params['body']['selchildid'] = $selchildid;
+			} else {
+				$query = qa_db_read_one_assoc(qa_db_query_raw("
+	SELECT postid, content FROM qa_posts WHERE `parentid` = ".$postid." AND `netvotes` = ".$amaxvote." LIMIT 1"), true);
+			$params['body']['selchildcontent'] = $query['content'];
+			$params['body']['selchildtext'] =  qa_post_content_to_text($query['content'], $format);
+			$params['body']['selchildid'] = $query['postid'];
+			}
+		}
 
 		$params['index'] = $this->es_index_name;
-		$params['type']  = 'post';
-		$params['id']    = $postid;
-
+		$params['id']    = intval($postid);
+		//error_log("Executed index");
 		// Document will be indexed to my_index/my_type/my_id
 		$ret = $this->es_client->index($params);
+		//error_log(microtime(true) - $start);
 	}
 
 	public function unindex_post($postid) {
 		$this->create_es_client_if_needed();
 		$deleteParams = array();
 		$deleteParams['index'] = $this->es_index_name;
-		$deleteParams['type'] = 'post';
 		$deleteParams['id'] = $postid;
+		//error_log("Executed unindex");
 		if ( $this->es_client->exists($deleteParams)) 
 			$retDelete = $this->es_client->delete($deleteParams);
 	}
@@ -191,9 +238,9 @@ class qa_elasticsearch {
 		$params['index'] = $this->es_index_name;
                 $params['type']  = 'post';
                 $params['id']    = $postid;
-		
+		//error_log("Executed move");
 		if ( $this->es_client->exists($params)) {
-		   $params['body'] = array ('categoryid' => $categoryid);
+		   $params['body']['doc'] = array ('categoryid' => $categoryid);
 		   $this->es_client->update($params);	
 		}	
 	}
@@ -202,7 +249,6 @@ class qa_elasticsearch {
 		$this->create_es_client_if_needed();
 		$results = array();
 		$params['index'] = $this->es_index_name;
-		$params['type']  = 'post';
 		$params['body']['query']['multi_match'] = array ( 'query' => $query , 'fields' => array('title','content','text'));
         $params['from'] = $start;
 		$params['size'] = $count;
@@ -214,9 +260,9 @@ class qa_elasticsearch {
 		foreach ( $es_results['hits']['hits'] as $q) {
 			$question = $q['_source'];
 			$results[]=array(
-                                'question_postid' => $question['questionid'],
-                                'match_type' => $question['type'],
-                                'match_postid' => $question['postid'],
+                                'question_postid' => intval($question['questionid']),
+                                'match_type' => strval($question['type']),
+                                'match_postid' => intval($question['postid']),
 				'title' => $question['title']
                         );
 		}
